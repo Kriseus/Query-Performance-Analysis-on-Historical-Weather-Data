@@ -1,0 +1,8 @@
+#!/home/bezi-tunowy/Bezi-Tunowy/Project/.projectVenv/bin/python3
+
+import add_connector_distributed_file
+import typer
+if __name__ == "__main__":
+
+    typer.run(add_connector_distributed_file.add_connect_starrocks_distributed_function)
+

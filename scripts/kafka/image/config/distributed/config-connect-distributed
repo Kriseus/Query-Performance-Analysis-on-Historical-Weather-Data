@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+import typer
+import config_connect_distributed_file
+
+if __name__ == "__main__":
+
+    typer.run(config_connect_distributed_file.config_connect_distributed_function)
+

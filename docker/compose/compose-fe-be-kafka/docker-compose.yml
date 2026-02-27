@@ -1,0 +1,79 @@
+services:
+  starrocks-fe-0:
+    image: bezi-tunowy/starrocks-fe-0
+    hostname: starrocks-fe-0
+    container_name: starrocks-fe-0
+    volumes:
+      - fe-0-metadata:/home/user/vols/metadata
+    ports:
+      - 8030:8030
+      - 9020:9020
+      - 9030:9030
+    command:
+      - /bin/bash
+      - -c
+      - |
+        mkdir -p /home/user/vols/metadata
+        /home/user/config/config-fe.sh -n 1
+        /opt/starrocks/fe/bin/start_fe.sh
+    networks:
+      - kafka-starrocks-stream
+  
+  starrocks-be-0:
+    depends_on:
+      - starrocks-fe-0
+    image: bezi-tunowy/starrocks-be-0
+    hostname: starrocks-be-0
+    container_name: starrocks-be-0
+    volumes:
+      - be-0-storage:/home/user/vols/storage
+    ports:
+      - 8040:8040
+    command:
+      - /bin/bash
+      - -c
+      - |
+        mkdir -p /home/user/vols/storage
+        /home/user/config/config-be.sh
+        sleep 30s;
+        ulimit -u 65535;
+        ulimit -n 65535;
+        mysql --connect-timeout 2 -h starrocks-fe-0 -P9030 -uroot -e "ALTER SYSTEM ADD BACKEND \"starrocks-be-0:9050\";"
+        /opt/starrocks/be/bin/start_be.sh
+    networks:
+      - kafka-starrocks-stream
+  kafka-0:
+    image: bezi-tunowy/kafka-0
+    hostname: kafka-0
+    container_name: kafka-0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-0:9092,EXTERNAL://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-0:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    command:
+      - /bin/bash
+      - -c
+      - | 
+        /home/appuser/scripts/config-scripts/conf-connect-StarRocks-sink.sh -f "starrocks-fe-0" -t "temp" -T "temp_tbl" -d "weather" -u "kriseu" -p "haslo1"
+        /home/appuser/scripts/config-scripts/conf-connect-standalone.sh -k 'kafka-0'
+        "/etc/kafka/docker/run"
+    networks:
+      - kafka-starrocks-stream
+
+volumes:
+  be-0-storage:
+  fe-0-metadata:
+
+networks:
+  kafka-starrocks-stream:
+    driver: bridge

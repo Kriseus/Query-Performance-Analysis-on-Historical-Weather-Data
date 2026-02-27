@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+import config_starrocks_sink_file
+import typer
+
+if __name__ == "__main__":
+
+    typer.run(config_starrocks_sink_file.config_connect_starrocks_function)

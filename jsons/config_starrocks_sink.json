@@ -1,0 +1,1 @@
+{"topics": ["temp", "temp2"], "tables": ["temp_tbl", "temp_tbl2"], "name": "starrocks-kafka-connector", "user": "user1", "passwd": "011235813", "database": "weather", "fehost": "starrocks-fe", "path": "/home/bezi-tunowy/Bezi-Tunowy/Project/docker/images/bezi-tunowy-kafka-0/config"}
