@@ -18,45 +18,70 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         
         super().__init__()
 
+        """Configs"""
         self.all_configs:typing.Dict[ str, typing.Dict[str, typing.Any] ]  = settingObj.config
         self.all_functions: typing.Dict[str, typing.Callable ]= settingObj.functions
-        self.JSN_DIR: pathlib.Path = settingObj.JSN_DIR
-        self.SCRIPT_DIR: pathlib.Path = settingObj.SCRIPT_DIR 
-        self.me: str = self.get_name()
-        self.my_config_key: str = f"{self.me}.json"
+        
+        """Directories"""
+        self.SCRIPT_DIR: pathlib.Path = settingObj.SCRIPT_DIR
+        self.JSN_VALUES_DIR: pathlib.Path = settingObj.JSN_VALUES_DIR
+        self.JSN_HINTS_DIR: pathlib.Path = settingObj.JSN_HINTS_DIR
+        self.JSN_TYPES_DIR: pathlib.Path = settingObj.JSN_TYPE_DIR
+        
+        """Identification"""
+        self.me: str = self.__get_name()
+        
+        """Hints"""
+        self.my_types: typing.Dict[ str, str ] = settingObj.types[f"{self.me}_types.json"]
+        self.my_hints: typing.Dict[ str, str ] = settingObj.hints
+        
+        """Local keys"""
+        self.my_config_key: str = f"{self.me}_values.json"
         self.my_function_key: str = f"{self.me}_function"
+        
+        """Input Hints"""
+        self.enumerator_over_config_keys: typing.Dict[int, str] = self.__get_enumerator_over_config_keys()
+        self.input_messages: typing.Dict[str,str]= {
+            "input_cont" : "Do You wish to change parameter? y/n :\n",
+            "input_key" : "Please select one of the following, numbers which matches the key you are intrested in " + f"{self.enumerator_over_config_keys}" + " :\n",
+            "input_value" :  "Please apply value of the parameter you chose :\n"
+        }
 
-    def get_name(self):
+        """Methods Acces"""
+        self.methods_acces : typing.dict[str, typing.Callable] = settingObj.methods_acces
+
+    def __get_name(self):
 
         return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()    
     
-    def do_rebuild_Json(self, _: cmd2.Statement):
+    def __get_enumerator_over_config_keys(self):
+        return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
+    
+    def __get_updates(self):
 
-        enumertor = { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
-        updatedDict  = self.all_configs[self.my_config_key].copy()
+        updated_dict  = self.all_configs[self.my_config_key].copy()
         
-        input_cont = "Do You wish to change parameter? y/n :\n"
-        input_key = "Please select one of the following, numbers which matches the key you are intrested in " + f"{enumertor}" + " :\n"
-        input_value = "Please apply value of the parameter you chose :\n"
-        
-        while (cont:= input(input_cont)) not in ("N", "n"):
-            
+        while (cont:= input(self.input_messages["input_cont"])) not in ("N", "n"):
             if cont not in ("y","Y"):
                 continue
-            
-            while (key:=int(input(input_key))) not in enumertor.keys():
+            while (key:=int(input(self.input_messages["input_key"]))) not in self.enumerator_over_config_keys.keys():
                 pass
+            value = input(self.input_messages["input_value"])
+            updated_dict[self.enumerator_over_config_keys[key]] = value
+        
+        return updated_dict
+    
+    def do_rebuild_Json(self, _: cmd2.Statement):
 
-            value = input(input_value)
-            updatedDict[enumertor[key]] = value
-            
-        with open( self.JSN_DIR / self.my_config_key, "w") as jsn:
+        updated_dict = self.__get_updates() 
 
-            jsn.write(json.dumps(updatedDict))
+        with open( self.JSN_VALUES_DIR / self.my_config_key, "w") as jsn:
+
+            jsn.write(json.dumps(updated_dict))
 
     def do_reloadJson(self, _: cmd2.Statement):
 
-        with open(self.JSN_DIR / self.my_config_key, "r") as jsn:
+        with open(self.JSN_VALUES_DIR / self.my_config_key, "r") as jsn:
             self.all_configs[self.my_config_key] = json.loads(jsn.read())
     
     def do_rebuild_and_reload(self, _: cmd2.Statement):
@@ -73,7 +98,7 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         print(
         f"{self.all_configs}\n",
         f"{self.all_functions}\n",
-        f"{self.JSN_DIR}\n",
+        f"{self.JSN_VALUES_DIR}\n",
         f"{self.SCRIPT_DIR}\n",
         f"{self.me}\n",
         f"{self.my_config_key}\n",
