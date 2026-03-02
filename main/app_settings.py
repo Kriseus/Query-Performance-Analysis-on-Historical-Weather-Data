@@ -57,12 +57,18 @@ class Settings:
                     .replace("/", ".")
                     .removesuffix(".py")
                 )
-
-                with import_context(path) as imp:
-                    functionsDir.update({name:obj for name, obj in inspect.getmembers(imp) if inspect.isfunction(obj)})
+                    # print(path)
+                # print(self.SCRIPT_DIR)
+                with contextlib.chdir(self.SCRIPT_DIR):
+                    # os.chdir("")
+                    print(os.getcwd())
+                    importlib.import_module(path)
+                    # with import_context(path) as imp:
+                    #     functionsDir.update({name:obj for name, obj in inspect.getmembers(imp) if inspect.isfunction(obj)})
 
         self.functions = functionsDir
 
 if __name__ == "__main__":
     
-    pass
+    a = Settings()
+    print(a.functions)
