@@ -18,6 +18,7 @@ def import_context(module):
 class Settings:
     def __init__(self):
 
+<<<<<<< HEAD
         # self.functions = None  
         # self.config = None 
         self.ROOT_DIR = self.__get_directories()
@@ -36,6 +37,19 @@ class Settings:
         self.methods_acces = self.__get_methods_acces()
 
     def __get_methods_acces(self):
+=======
+        self.ROOT_DIR = self.__get_directories() 
+        self.JSN_DIR = self.ROOT_DIR / 'jsons'
+        self.SCRIPT_DIR = self.ROOT_DIR / 'scripts'
+        if str(self.SCRIPT_DIR) not in sys.path:
+            sys.path.insert(str(self.SCRIPT_DIR))
+        
+        self.functions = self.__load_config(self.JSN_DIR)
+        self.config = self.__load_config(self.SCRIPT_DIR)
+
+    @staticmethod
+    def __get_directories():
+>>>>>>> thrash
 
         return {
                 "str"   : str,                
@@ -53,6 +67,7 @@ class Settings:
         
         return DIR
     
+<<<<<<< HEAD
     def __load_hints(self, dir):
         
         with open(dir / "hints.json", "r") as jsn:
@@ -94,3 +109,37 @@ if __name__ == "__main__":
     a = Settings()
     # print(a.types)    
     pass
+=======
+    @staticmethod
+    def __load_config(JSN_DIR):
+
+        configs = dict()
+        with contextlib.chdir(JSN_DIR):
+            for file in [_ for _ in os.listdir(JSN_DIR) if _.endswith('.json')]:
+                with open(file, "r") as jsn:
+                    configs[file] = json.loads(jsn.read())
+        return configs
+    
+    @staticmethod
+    def __load_functions(SCRIPT_DIR):
+        functionsDir = dict()
+        for path in map(str, SCRIPT_DIR.rglob("*")):
+            if path.endswith(".py"):
+                path = (
+                    path
+                    .removeprefix(f"{SCRIPT_DIR}/")
+                    .replace("/", ".")
+                    .removesuffix(".py")
+                )
+
+                with contextlib.chdir(SCRIPT_DIR):
+                    with import_context(path) as imp:
+                        functionsDir.update({name:obj for name, obj in inspect.getmembers(imp) if inspect.isfunction(obj)})
+
+        return functionsDir
+
+if __name__ == "__main__":
+    
+    a = Settings()
+    print(a.functions)
+>>>>>>> thrash

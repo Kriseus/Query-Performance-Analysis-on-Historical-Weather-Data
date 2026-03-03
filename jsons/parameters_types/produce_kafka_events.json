@@ -1,0 +1,1 @@
+{"continentName": "str", "bootstrap": "str", "timeStart": "int", "timeEnd": "int", "APIparameters": "list", "kafTopic": "str", "multipocesses": "int"}
