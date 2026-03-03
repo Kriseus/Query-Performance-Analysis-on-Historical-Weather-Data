@@ -19,54 +19,51 @@ def import_context(module):
 class Settings:
     def __init__(self):
 
-        self.functions = None  
-        self.config = None 
-        self.ROOT_DIR = self._get_directories() 
+        self.ROOT_DIR = self.__get_directories() 
         self.JSN_DIR = self.ROOT_DIR / 'jsons'
         self.SCRIPT_DIR = self.ROOT_DIR / 'scripts'
-        self.load_config()
-        self.load_functions()
+        if str(self.SCRIPT_DIR) not in sys.path:
+            sys.path.insert(str(self.SCRIPT_DIR))
+        
+        self.functions = self.__load_config(self.JSN_DIR)
+        self.config = self.__load_config(self.SCRIPT_DIR)
 
     @staticmethod
-    def _get_directories():
+    def __get_directories():
 
         DIR = pathlib.Path(__file__).resolve().parent
         while DIR.name != "Project":
             DIR = DIR.parent
 
         return DIR
-
-    def load_config(self):
+    
+    @staticmethod
+    def __load_config(JSN_DIR):
 
         configs = dict()
-        with contextlib.chdir(self.JSN_DIR):
-            for file in [_ for _ in os.listdir(self.JSN_DIR) if _.endswith('.json')]:
+        with contextlib.chdir(JSN_DIR):
+            for file in [_ for _ in os.listdir(JSN_DIR) if _.endswith('.json')]:
                 with open(file, "r") as jsn:
                     configs[file] = json.loads(jsn.read())
-
-        self.config = configs
-
-    def load_functions(self):
-
+        return configs
+    
+    @staticmethod
+    def __load_functions(SCRIPT_DIR):
         functionsDir = dict()
-        for path in map(str, pathlib.Path(self.SCRIPT_DIR).rglob("*")):
+        for path in map(str, SCRIPT_DIR.rglob("*")):
             if path.endswith(".py"):
                 path = (
                     path
-                    .removeprefix(f"{self.SCRIPT_DIR}/")
+                    .removeprefix(f"{SCRIPT_DIR}/")
                     .replace("/", ".")
                     .removesuffix(".py")
                 )
-                    # print(path)
-                # print(self.SCRIPT_DIR)
-                with contextlib.chdir(self.SCRIPT_DIR):
-                    # os.chdir("")
-                    print(os.getcwd())
-                    importlib.import_module(path)
-                    # with import_context(path) as imp:
-                    #     functionsDir.update({name:obj for name, obj in inspect.getmembers(imp) if inspect.isfunction(obj)})
 
-        self.functions = functionsDir
+                with contextlib.chdir(SCRIPT_DIR):
+                    with import_context(path) as imp:
+                        functionsDir.update({name:obj for name, obj in inspect.getmembers(imp) if inspect.isfunction(obj)})
+
+        return functionsDir
 
 if __name__ == "__main__":
     
