@@ -1,1 +1,1 @@
-{"continentName": "Europe", "bootstrap": "localhost:9094", "timeStart": 20140101, "timeEnd": 20140131, "APIparameters": "[\"T2M\", \"T10M\"]", "kafTopic": "temperatures", "multipocesses": 12}
+{"continentName": "Europe", "bootstrap": "localhost:9094", "timeStart": 20140101, "timeEnd": 20140131, "APIparameters": ["T2M", "T10M"], "kafTopic": "temperatures", "multipocesses": 12}

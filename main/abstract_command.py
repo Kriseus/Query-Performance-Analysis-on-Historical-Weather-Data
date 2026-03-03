@@ -19,36 +19,37 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         super().__init__()
 
         """Configs"""
-        self.all_configs:typing.Dict[ str, typing.Dict[str, typing.Any] ]  = settingObj.config
-        self.all_functions: typing.Dict[str, typing.Callable ]= settingObj.functions
-        
+        self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = settingObj.config
+        self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
+        self.all_types: typing.Dict[str, str ] = settingObj.types
+
         """Directories"""
         self.SCRIPT_DIR: pathlib.Path = settingObj.SCRIPT_DIR
         self.JSN_VALUES_DIR: pathlib.Path = settingObj.JSN_VALUES_DIR
         self.JSN_HINTS_DIR: pathlib.Path = settingObj.JSN_HINTS_DIR
-        self.JSN_TYPES_DIR: pathlib.Path = settingObj.JSN_TYPE_DIR
+        self.JSN_TYPES_DIR: pathlib.Path = settingObj.JSN_TYPES_DIR
         
         """Identification"""
         self.me: str = self.__get_name()
         
-        """Hints"""
-        self.my_types: typing.Dict[ str, str ] = settingObj.types[f"{self.me}_types.json"]
-        self.my_hints: typing.Dict[ str, str ] = settingObj.hints
-        
         """Local keys"""
-        self.my_config_key: str = f"{self.me}_values.json"
+        self.my_config_key: str = f"{self.me}.json"
         self.my_function_key: str = f"{self.me}_function"
-        
+
+        """Hints"""
+        self.my_hints: typing.Dict[ str, str ] = settingObj.hints
+        self.my_types: typing.Dict[ str, str ] = settingObj.types[ self.my_config_key ]
+
         """Input Hints"""
-        self.enumerator_over_config_keys: typing.Dict[int, str] = self.__get_enumerator_over_config_keys()
-        self.input_messages: typing.Dict[str,str]= {
-            "input_cont" : "Do You wish to change parameter? y/n :\n",
-            "input_key" : "Please select one of the following, numbers which matches the key you are intrested in " + f"{self.enumerator_over_config_keys}" + " :\n",
-            "input_value" :  "Please apply value of the parameter you chose :\n"
+        self.enumerator_over_config_keys: typing.Dict[ int, str ] = self.__get_enumerator_over_config_keys()
+        self.input_messages: typing.Dict[ str, str ]= {
+            "input_cont"  : "Do You wish to change parameter? y/n :\n",
+            "input_key"   : "Please select one of the following, numbers which matches the key you are intrested in " + f"{self.enumerator_over_config_keys}" + " :\n",
+            "input_value" : "Please apply value of the parameter you chose :\n"
         }
 
         """Methods Acces"""
-        self.methods_acces : typing.dict[str, typing.Callable] = settingObj.methods_acces
+        self.methods_acces : typing.Dict[str, typing.Callable] = settingObj.methods_acces
 
     def __get_name(self):
 
@@ -66,10 +67,14 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
                 continue
             while (key:=int(input(self.input_messages["input_key"]))) not in self.enumerator_over_config_keys.keys():
                 pass
-            value = input(self.input_messages["input_value"])
-            updated_dict[self.enumerator_over_config_keys[key]] = value
+
+            key_method = self.methods_acces[self.my_types[self.enumerator_over_config_keys[key]]]
+            
+            value = key_method(input(  f"{self.input_messages["input_value"]}"))
+            print(type(value), " : " ,value)
+            # updated_dict[self.enumerator_over_config_keys[key]] = value
         
-        return updated_dict
+        # return updated_dict
     
     def do_rebuild_Json(self, _: cmd2.Statement):
 

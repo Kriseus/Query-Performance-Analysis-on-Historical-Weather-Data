@@ -32,9 +32,9 @@ class Settings:
         self.config = self.__load_jsns(self.JSN_VALUES_DIR)
         self.types = self.__load_jsns(self.JSN_TYPES_DIR) 
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
-
+        self.methods_acces = self.__get_methods()
     @staticmethod
-    def __get_directories():
+    def __get_methods():
 
         return {
                 "str"   : str,                
