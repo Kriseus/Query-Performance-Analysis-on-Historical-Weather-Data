@@ -20,16 +20,16 @@ class ConfigConnectStarrocks(abstract_command.AbstractCommand):
 class AddTopics(abstract_command.AbstractCommand):
     pass
 
-class CreateDatabases(abstract_command.AbstractCommand):
+class CreateDatabases(abstract_command.AbstractQueryCommand):
     pass
 
-class CreateTable(abstract_command.AbstractCommand):
+class CreateTable(abstract_command.AbstractQueryCommand):
     pass
 
-class CreateUsers(abstract_command.AbstractCommand):
+class CreateUsers(abstract_command.AbstractQueryCommand):
     pass
 
-class GrantUserPrivilages(abstract_command.AbstractCommand):
+class GrantUserPrivilages(abstract_command.AbstractQueryCommand):
     pass
 
     

@@ -4,12 +4,12 @@ import re
 import pathlib
 import json
 import typing 
+import functools
 
-FILE_DIR = pathlib.Path(__file__).resolve().parent
-ROOT_DIR = FILE_DIR
+ROOT_DIR = pathlib.Path(__file__).resolve().parent
 
-while ROOT_DIR.name != "Project":
-    ROOT_DIR = ROOT_DIR.parent
+while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
+    pass
 JSN_DIR = ROOT_DIR / "jsons"
 
 class AbstractCommand(abc.ABC, cmd2.Cmd):
@@ -109,6 +109,18 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         f"{self.my_config_key}\n",
         f"{self.my_function_key}\n",
         )
+
+class AbstractQueryCommand(AbstractCommand):
+
+    def __init__(self, settingsObj, sqlEngine):
+        
+        super().__init__(settingsObj)
+        self.sqlEngine = sqlEngine
+
+    def do_execute(self, _: cmd2.Statement):
+        ready_to_exec = functools.partial(self.all_functions[self.my_function_key], **self.all_configs[self.my_config_key])
+        ready_to_exec(self.sqlEngine)  
+
 
 if __name__ == "__main__":
 

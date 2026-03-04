@@ -34,6 +34,7 @@ class Settings:
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
         self.methods_acces = self.__get_methods()
 
+        self.sqlEngine
     @staticmethod
     def __get_methods():
 
