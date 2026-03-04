@@ -33,6 +33,7 @@ class Settings:
         self.types = self.__load_jsns(self.JSN_TYPES_DIR) 
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
         self.methods_acces = self.__get_methods()
+
     @staticmethod
     def __get_methods():
 
@@ -97,7 +98,7 @@ class Settings:
 if __name__ == "__main__":
 
     a = Settings()
-    print(a.functions)
-    print(a.hints)
-    print(a.types)
-    print(a.config)
+    [print(i) for i in a.functions]
+    # print(a.hints)
+    # print(a.types)
+    # print(a.config)
