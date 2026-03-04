@@ -16,6 +16,10 @@ class abstractQuery(abc.ABC):
     def _completeQuery(self):
         pass
 
+    @abc.abstractmethod
+    def plot_query(self):
+        pass
+
     def showQuery(self):
         print(self.sqlQuery)
     
@@ -52,3 +56,7 @@ class abstractQuery(abc.ABC):
     def __iter__(self):
 
         return self._executeQueryAndReturnAsGenerator()
+    
+    def __call__(self):
+        
+        self.plot_query()

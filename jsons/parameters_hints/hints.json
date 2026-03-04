@@ -1,1 +1,8 @@
-{"str": "This parameter expects string as a value. Please apply anything You want, but remember that the Parameter has to be coherent with logic of the program. ", "int": "This parameter expects int as a value. Please put the integer here, if the variable is related to time please apply int inthe following format: YYYYMMDD. ", "float" : "This parameter expects float as a value. Plese apply float", "list": "This parameter expects list as a value. Please apply your parameter with presented format: ['str0', 'str1', 'str2']", "bool": "This parameter expects bool as a value. Please press enter if You want this value to be False. If you apply anything else the value will be set to True. ", "dict": " dicts are no allowed right now. "}
+{
+    "str": "This parameter expects string as a value. Please apply anything You want, but remember that the Parameter has to be coherent with logic of the program. ",
+    "int": "This parameter expects int as a value. Please put the integer here, if the variable is related to time please apply int inthe following format: YYYYMMDD. ",
+    "float" : "This parameter expects float as a value. Plese apply float", 
+    "list": "This parameter expects list as a value. Please apply your parameter with presented format: ['str0', 'str1', 'str2']", 
+    "bool": "This parameter expects bool as a value. Please press enter if You want this value to be False. If you apply anything else the value will be set to True. ", 
+    "dict": " dicts are no allowed right now. "
+}

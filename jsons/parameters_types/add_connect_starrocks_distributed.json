@@ -1,0 +1,9 @@
+{
+"topics":"list",
+"tables":"list", 
+"name":"str",
+"user":"str", 
+"passwd":"str",
+"database":"str", 
+"fehost":"str"
+}

@@ -70,7 +70,7 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
 
             key_method = self.methods_acces[self.my_types[self.enumerator_over_config_keys[key]]]
             
-            value = key_method(input(  f"{self.input_messages["input_value"]}"))
+            value = key_method(input(f"{self.input_messages["input_value"]}"))
             print(type(value), " : " ,value)
             # updated_dict[self.enumerator_over_config_keys[key]] = value
         
@@ -98,7 +98,12 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         
         self.all_functions[self.my_function_key](**self.all_configs[self.my_config_key])
 
-    def do_show(self, _: cmd2.Statement):
+    def do_show_current_config(self, _: cmd2.Statement):
+
+        for key, value in self.all_configs[self.my_config_key].items():
+            print(f"{key}: {value}")
+
+    def do_show_self(self, _: cmd2.Statement):
 
         print(
         f"{self.all_configs}\n",
@@ -110,7 +115,7 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         f"{self.my_function_key}\n",
         )
 
-class AbstractQueryCommand(AbstractCommand):
+class AbstractSQLCommand(AbstractCommand):
 
     def __init__(self, settingsObj, sqlEngine):
         

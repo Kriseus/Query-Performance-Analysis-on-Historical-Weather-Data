@@ -1,6 +1,4 @@
 import requests
-import typer
-import typing
 
 def add_connect_starrocks_distributed_function(
         topics   = ['temp', 'temp2'],

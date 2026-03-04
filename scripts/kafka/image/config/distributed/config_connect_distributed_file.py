@@ -4,16 +4,18 @@ import typer
 import json
 
 
-FILE_DIR = pathlib.Path(__file__).resolve().parent
-ROOT_DIR = FILE_DIR
-while str(ROOT_DIR)[-7:] != "Project":
-    ROOT_DIR = ROOT_DIR.parent
+ROOT_DIR = pathlib.Path(__file__).resolve().parent
+
+while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
+    pass
 
 def config_connect_distributed_function(
         kafhost: str | None = typer.Option("kafka-0", "--kafhost", "-k"),
-        path:    str | None = typer.Option(ROOT_DIR / "docker/images/kafka/distributed-connector/bezi-tunowy-kafka-0/config", "--path", "-p"),
+        path:    str | None = typer.Option( "docker/images/kafka/distributed-connector/bezi-tunowy-kafka-0/config", "--path", "-p"),
         ):
     
+
+
     configString = [
         f"bootstrap.servers={kafhost}:9092",
         f"group.id=connect-cluster",
@@ -30,7 +32,7 @@ def config_connect_distributed_function(
         f"plugin.path=/home/appuser/connector/starrocks-kafka-connector-1.0.4",
         ]
 
-    with open( pathlib.Path(path) / f"connect-distributed.properties", "w" ) as standalone:
+    with open( ROOT_DIR / path / f"connect-distributed.properties", "w" ) as standalone:
         
         standalone.write("\n".join(configString))
 

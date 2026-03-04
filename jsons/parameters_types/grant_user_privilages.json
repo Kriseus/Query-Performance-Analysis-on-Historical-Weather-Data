@@ -1,0 +1,6 @@
+{
+    "username" : "str",
+    "privileges" :"list",
+    "table" : "str",
+    "database" : "str"
+}

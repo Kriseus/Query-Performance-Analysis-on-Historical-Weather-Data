@@ -1,0 +1,6 @@
+{
+    "username" : "kriseu",
+    "privileges" : ["ALL"],
+    "table" : "ALL TABLES",
+    "database" : "ALL DATABASES"
+}

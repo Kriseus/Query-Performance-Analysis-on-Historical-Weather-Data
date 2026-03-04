@@ -18,7 +18,10 @@ class Query3(abstractQuery.abstractQuery):
     def _completeQuery(self):
         
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit,)
-    
+
+    def plot_query(self):
+        return super().plot_query()
+
 class Query4(abstractQuery.abstractQuery):
     
     def __init__(self, sqlEngine, database, table, queryMethod = queryMethods.method_query_4, 
@@ -34,6 +37,9 @@ class Query4(abstractQuery.abstractQuery):
 
     def _completeQuery(self):
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit )
+    
+    def plot_query(self):
+        return super().plot_query()
     
 if __name__ == "__main__":
     

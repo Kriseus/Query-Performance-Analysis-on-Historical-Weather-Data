@@ -1,0 +1,6 @@
+{
+    "database":"str", 
+    "name":"str", 
+    "parameterColumns":"list",
+    "types":"list"
+}
