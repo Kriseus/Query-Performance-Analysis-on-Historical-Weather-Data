@@ -22,7 +22,7 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = settingObj.config
         self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
         self.all_types: typing.Dict[str, str ] = settingObj.types
-
+        
         """Directories"""
         self.SCRIPT_DIR: pathlib.Path = settingObj.SCRIPT_DIR
         self.JSN_VALUES_DIR: pathlib.Path = settingObj.JSN_VALUES_DIR
@@ -55,13 +55,20 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
 
         return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()    
     
+    def __show_configs(self):
+
+        print("<<ALL CONFIG VATIABLES>>")
+        for key, value in self.all_configs[self.my_config_key].items():
+            print(f"Parameter: {key}: {value}")
+
     def __get_enumerator_over_config_keys(self):
         return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
     
     def __get_updates(self):
 
+        self.__show_configs()
         updated_dict  = self.all_configs[self.my_config_key].copy()
-        
+
         while (cont:= input(self.input_messages["input_cont"])) not in ("N", "n"):
             if cont not in ("y","Y"):
                 continue
@@ -69,8 +76,11 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
                 pass
 
             key_method = self.methods_acces[self.my_types[self.enumerator_over_config_keys[key]]]
-            
+            print(self.my_hints[self.my_types[self.enumerator_over_config_keys[key]]])
             value = key_method(input(f"{self.input_messages["input_value"]}"))
+            if str(input("Do You wish to show current configs? ")) in ('Y', 'y'):
+                self.__show_configs()
+
             print(type(value), " : " ,value)
             # updated_dict[self.enumerator_over_config_keys[key]] = value
         
@@ -100,8 +110,7 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
 
     def do_show_current_config(self, _: cmd2.Statement):
 
-        for key, value in self.all_configs[self.my_config_key].items():
-            print(f"{key}: {value}")
+        self.__show_configs()
 
     def do_show_self(self, _: cmd2.Statement):
 
@@ -117,15 +126,15 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
 
 class AbstractSQLCommand(AbstractCommand):
 
-    def __init__(self, settingsObj, sqlEngine):
+    def __init__(self, settingsObj):
         
         super().__init__(settingsObj)
-        self.sqlEngine = sqlEngine
+        
+        self.sqlEngine = settingsObj.sqlEngine
 
     def do_execute(self, _: cmd2.Statement):
         ready_to_exec = functools.partial(self.all_functions[self.my_function_key], **self.all_configs[self.my_config_key])
         ready_to_exec(self.sqlEngine)  
-
 
 if __name__ == "__main__":
 

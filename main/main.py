@@ -28,7 +28,7 @@ class Main(cmd2.Cmd):
         sys.exit(self.all_commands.add_connect_starrocks_distributed.cmdloop())
 
     def do_config_connect_starrocks(self, _: cmd2.Statement):
-        sys.exit(self.all_commands.config_connect_starrocks)
+        sys.exit(self.all_commands.config_connect_starrocks.cmdloop())
 
     def do_add_topics(self, _: cmd2.Statement):
         sys.exit(self.all_commands.add_topics.cmdloop())

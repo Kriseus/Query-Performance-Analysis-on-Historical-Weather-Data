@@ -6,6 +6,7 @@ import os
 import json 
 import inspect
 import ast  
+import sqlalchemy
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent
 
@@ -34,7 +35,8 @@ class Settings:
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
         self.methods_acces = self.__get_methods()
 
-        self.sqlEngine
+        self.sqlEngine = sqlalchemy.create_engine('starrocks://root@localhost:9030/')
+
     @staticmethod
     def __get_methods():
 

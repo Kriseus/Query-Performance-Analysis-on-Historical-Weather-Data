@@ -14,7 +14,7 @@ class ProduceKafkaEvents(abstract_command.AbstractCommand):
 class AddConnectStarrocksDistributed(abstract_command.AbstractCommand):
     pass
 
-class ConfigConnectStarrocks(abstract_command.AbstractCommand):
+class ConfigStarrocksSink(abstract_command.AbstractCommand):
     pass
 
 class AddTopics(abstract_command.AbstractCommand):
@@ -41,7 +41,7 @@ class CommandBox:
     config_connect_standalone:  ConfigConnectStandalone = ConfigConnectStandalone(settingObj)
     produce_kafka_events:  ProduceKafkaEvents = ProduceKafkaEvents(settingObj)
     add_connect_starrocks_distributed:  AddConnectStarrocksDistributed = AddConnectStarrocksDistributed(settingObj)
-    configconnectstarrocks:  ConfigConnectStarrocks = ConfigConnectStarrocks(settingObj)
+    config_connect_starrocks: ConfigStarrocksSink = ConfigStarrocksSink(settingObj)
     add_topics:  AddTopics = AddTopics(settingObj)
     create_databases:  CreateDatabases = CreateDatabases(settingObj)
     create_table:  CreateTable = CreateTable(settingObj)
