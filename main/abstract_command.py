@@ -5,6 +5,7 @@ import pathlib
 import json
 import typing 
 import functools
+import subprocess
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent
 while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
@@ -13,14 +14,13 @@ while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
 JSN_DIR = ROOT_DIR / "jsons"
 
 class AbstractCommand(abc.ABC, cmd2.Cmd):
-
+    @abc.abstractmethod
     def __init__(self, settingObj):
-        
         super().__init__()
 
         """Configs"""
         self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = settingObj.config
-        self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
+        # self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
         self.all_types: typing.Dict[str, str ] = settingObj.types
         
         """Directories"""
@@ -34,7 +34,7 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         
         """Local keys"""
         self.my_config_key: str = f"{self.me}.json"
-        self.my_function_key: str = f"{self.me}_function"
+        # self.my_function_key: str = f"{self.me}_function"
 
         """Hints"""
         self.my_hints: typing.Dict[ str, str ] = settingObj.hints
@@ -52,12 +52,10 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         self.methods_acces : typing.Dict[str, typing.Callable] = settingObj.methods_acces
 
     def __get_name(self):
-
         return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()    
     
     def __show_configs(self):
-
-        print("<<ALL CONFIG VATIABLES>>")
+        print("<<ALL CONFIG VARIABLES>>")
         for key, value in self.all_configs[self.my_config_key].items():
             print(f"Parameter: {key}: {value}")
 
@@ -65,13 +63,13 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
     
     def __get_updates(self):
-
         self.__show_configs()
         updated_dict  = self.all_configs[self.my_config_key].copy()
-
         while (cont:= input(self.input_messages["input_cont"])) not in ("N", "n"):
+
             if cont not in ("y","Y"):
                 continue
+
             while (key:=int(input(self.input_messages["input_key"]))) not in self.enumerator_over_config_keys.keys():
                 pass
 
@@ -81,49 +79,59 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
             if str(input("Do You wish to show current configs? ")) in ('Y', 'y'):
                 self.__show_configs()
 
-            # print(type(value), " : " ,value)
             updated_dict[self.enumerator_over_config_keys[key]] = value
         
         return updated_dict
     
     def do_rebuild_Json(self, _: cmd2.Statement):
-
         updated_dict = self.__get_updates() 
-
         with open( self.JSN_VALUES_DIR / self.my_config_key, "w") as jsn:
-
             jsn.write(json.dumps(updated_dict))
 
     def do_reloadJson(self, _: cmd2.Statement):
-
         with open(self.JSN_VALUES_DIR / self.my_config_key, "r") as jsn:
             self.all_configs[self.my_config_key] = json.loads(jsn.read())
     
     def do_rebuild_and_reload(self, _: cmd2.Statement):
-        
         self.do_rebuild_Json(self)
         self.do_reloadJson(self)
 
-    def do_execute(self, _: cmd2.Statement):
-        
-        self.all_functions[self.my_function_key](**self.all_configs[self.my_config_key])
-
     def do_show_current_config(self, _: cmd2.Statement):
-
         self.__show_configs()
 
-    # def do_show_self(self, _: cmd2.Statement):
-# 
-        # print(
-        # f"{self.all_configs}\n",
-        # f"{self.all_functions}\n",
-        # f"{self.JSN_VALUES_DIR}\n",
-        # f"{self.SCRIPT_DIR}\n",
-        # f"{self.me}\n",
-        # f"{self.my_config_key}\n",
-        # f"{self.my_function_key}\n",
-        # )
-# 
+    @abc.abstractmethod
+    def do_execute(self, _: cmd2.Statement):
+        pass
+
+class AbstractPythonCommand(AbstractCommand):
+    def __init__(self, settingObj):
+        super().__init__(settingObj)
+
+        """Configs"""
+        self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
+        
+        """Local keys"""
+        self.my_function_key: str = f"{self.me}_function"
+
+    def do_execute(self, _: cmd2.Statement):
+        self.all_functions[self.my_function_key](**self.all_configs[self.my_config_key])
+
+class AbstractBashCommand(AbstractCommand):
+    def __init__(self, settingObj):
+        super().__init__(settingObj)
+
+        """Configs"""
+        self.all_bash_scripts: typing.Dict[str, str] = settingObj.bash_scripts
+
+        """Local keys"""
+        self.my_scripts_key: str = f"{self.me}_script"
+
+    def do_execute(self, _: cmd2.Statement):
+        subprocess.run('bash', self.all_bash_scripts[self.my_scripts_key])
+
+class AbstractQuery():
+    pass
+
 class AbstractSQLCommand(AbstractCommand):
 
     def __init__(self, settingsObj):
