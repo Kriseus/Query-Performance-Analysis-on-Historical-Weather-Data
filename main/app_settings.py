@@ -30,6 +30,7 @@ class Settings:
             sys.path.insert(1, str(self.SCRIPT_DIR))
         
         self.functions = self.__load_functions(self.SCRIPT_DIR)
+        self.bash_scripts = self.__load_bash_scripts(self.SCRIPT_DIR)
         self.config = self.__load_jsns(self.JSN_VALUES_DIR)
         self.types = self.__load_jsns(self.JSN_TYPES_DIR) 
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
@@ -39,7 +40,6 @@ class Settings:
 
     @staticmethod
     def __get_methods():
-
         return {
                 "str"   : str,                
                 "bool"  : bool,
@@ -50,7 +50,6 @@ class Settings:
     
     @staticmethod
     def __get_directories():
-        
         DIR = pathlib.Path(__file__).resolve().parent
         while (DIR := DIR.parent).name != "Project":
             pass
@@ -59,14 +58,12 @@ class Settings:
     
     @staticmethod
     def __load_hints(dir):
-        
         with open(dir / "hints.json", "r") as jsn:
             return json.loads(jsn.read()) 
 
     @staticmethod
     def __load_jsns(dir):
         configs = dict()
-
         with contextlib.chdir(dir):
             for file in [_ for _ in os.listdir(str(dir)) if _.endswith('.json')]:
                 with open(file, "r") as jsn:
@@ -76,7 +73,6 @@ class Settings:
     
     @staticmethod
     def __load_functions(dir):
-
         functionsDir = dict()
         for path in map(str, dir.rglob("*")):
             if path.endswith(".py"):
@@ -91,6 +87,16 @@ class Settings:
 
         return functionsDir
     
+    @staticmethod
+    def __load_bash_scripts(dir):
+        scriptsDict = dict()
+        name = ""
+        for path in dir.rglob("*"):
+            if (name:=path.name).endswith(".sh"):
+                scriptsDict[name.removesuffix(".sh")] = str(path)
+
+        return scriptsDict 
+
     def reload_functions(self):
         self.functions = self.__load_functions(self.SCRIPT_DIR)
 
@@ -102,6 +108,7 @@ if __name__ == "__main__":
 
     a = Settings()
     [print(i) for i in a.functions]
-    # print(a.hints)
-    # print(a.types)
-    # print(a.config)
+    print(a.hints)
+    print(a.types)
+    print(a.config)
+    print(a.bash_scripts)

@@ -124,25 +124,30 @@ class AbstractBashCommand(AbstractCommand):
         self.all_bash_scripts: typing.Dict[str, str] = settingObj.bash_scripts
 
         """Local keys"""
-        self.my_scripts_key: str = f"{self.me}_script"
+        self.my_scripts_key: str = f"{self.me}"
 
     def do_execute(self, _: cmd2.Statement):
-        subprocess.run('bash', self.all_bash_scripts[self.my_scripts_key])
-
-class AbstractQuery():
-    pass
+        subprocess.run('/bin/bash', self.all_bash_scripts[self.my_scripts_key])
 
 class AbstractSQLCommand(AbstractCommand):
 
-    def __init__(self, settingsObj):
+    def __init__(self, settingObj):
         
-        super().__init__(settingsObj)
+        super().__init__(settingObj)
         
-        self.sqlEngine = settingsObj.sqlEngine
+        """Configs"""
+        self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
+
+        """Local keys"""
+        self.my_function_key: str = f"{self.me}_function"
+        self.sqlEngine = settingObj.sqlEngine
 
     def do_execute(self, _: cmd2.Statement):
         ready_to_exec = functools.partial(self.all_functions[self.my_function_key], **self.all_configs[self.my_config_key])
         ready_to_exec(self.sqlEngine)  
+
+class AbstractQueryCommand():
+    pass
 
 if __name__ == "__main__":
 

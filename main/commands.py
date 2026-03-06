@@ -32,6 +32,15 @@ class CreateUsers(abstract_command.AbstractSQLCommand):
 class GrantUserPrivilages(abstract_command.AbstractSQLCommand):
     pass
 
+class StopProject(abstract_command.AbstractBashCommand): 
+    pass
+
+class StartProject(abstract_command.AbstractBashCommand):
+    pass
+
+class DownProject(abstract_command.AbstractBashCommand):
+    pass
+
 @dataclasses.dataclass(frozen = True)
 class CommandBox:
 
@@ -47,8 +56,9 @@ class CommandBox:
     create_table:  CreateTable = CreateTable(settingObj)
     create_users:  CreateUsers = CreateUsers(settingObj)
     grant_user_privilages:  GrantUserPrivilages = GrantUserPrivilages(settingObj)
-
-
+    stop_project: StopProject = StopProject(settingObj)
+    start_project: StartProject = StartProject(settingObj)
+    down_project: DownProject = DownProject(settingObj)
 
 
 if __name__ == "__main__":
