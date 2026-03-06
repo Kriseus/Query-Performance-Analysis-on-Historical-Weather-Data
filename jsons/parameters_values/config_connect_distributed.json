@@ -1,4 +1,1 @@
-{
-"kafhost":"kafka-0",
-"path":"docker/images/kafka/distributed-connector/bezi-tunowy-kafka-0/config"
-}
+{"kafhost": "kafka-0", "path": "docker/images/kafka/distributed-connector/config"}

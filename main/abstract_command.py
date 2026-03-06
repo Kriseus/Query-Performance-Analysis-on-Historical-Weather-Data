@@ -7,9 +7,9 @@ import typing
 import functools
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent
-
 while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
     pass
+
 JSN_DIR = ROOT_DIR / "jsons"
 
 class AbstractCommand(abc.ABC, cmd2.Cmd):
@@ -81,10 +81,10 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
             if str(input("Do You wish to show current configs? ")) in ('Y', 'y'):
                 self.__show_configs()
 
-            print(type(value), " : " ,value)
-            # updated_dict[self.enumerator_over_config_keys[key]] = value
+            # print(type(value), " : " ,value)
+            updated_dict[self.enumerator_over_config_keys[key]] = value
         
-        # return updated_dict
+        return updated_dict
     
     def do_rebuild_Json(self, _: cmd2.Statement):
 
@@ -112,18 +112,18 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
 
         self.__show_configs()
 
-    def do_show_self(self, _: cmd2.Statement):
-
-        print(
-        f"{self.all_configs}\n",
-        f"{self.all_functions}\n",
-        f"{self.JSN_VALUES_DIR}\n",
-        f"{self.SCRIPT_DIR}\n",
-        f"{self.me}\n",
-        f"{self.my_config_key}\n",
-        f"{self.my_function_key}\n",
-        )
-
+    # def do_show_self(self, _: cmd2.Statement):
+# 
+        # print(
+        # f"{self.all_configs}\n",
+        # f"{self.all_functions}\n",
+        # f"{self.JSN_VALUES_DIR}\n",
+        # f"{self.SCRIPT_DIR}\n",
+        # f"{self.me}\n",
+        # f"{self.my_config_key}\n",
+        # f"{self.my_function_key}\n",
+        # )
+# 
 class AbstractSQLCommand(AbstractCommand):
 
     def __init__(self, settingsObj):

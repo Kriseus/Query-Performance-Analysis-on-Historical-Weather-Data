@@ -1,6 +1,1 @@
-{
-    "database":"weather", 
-    "name":"temp_tbl", 
-    "parameterColumns":["T2M", "T10M"],
-    "types":["FLOAT", "FLOAT"]
-}
+{"database": "weather", "name": "temperatures_table", "parameterColumns": ["T2M", "T10M"], "types": ["FLOAT", "FLOAT"]}
