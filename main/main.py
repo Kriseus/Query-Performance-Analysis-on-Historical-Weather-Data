@@ -47,10 +47,17 @@ class Main(cmd2.Cmd):
         self.all_commands.grant_user_privilages.cmdloop()
 
     def do_start_project(self, _: cmd2.Statement):
-        pass
+        self.all_commands.start_project.cmdloop()
 
+    def do_stop_project(self, _: cmd2.Statement):
+        self.all_commands.stop_project.cmdloop()
+    
+    def do_down_project(self, _: cmd2.Statement):
+        self.all_commands.down_project.cmdloop()
 
-
+    def do_build_image(self, _: cmd2.Statement):
+        self.all_commands.build_image.cmdloop()
+        
 if __name__ == '__main__':
     ROOT_DIR = pathlib.Path(__file__).resolve().parent
 

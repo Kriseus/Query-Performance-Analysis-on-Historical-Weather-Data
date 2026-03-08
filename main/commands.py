@@ -2,22 +2,22 @@ import abstract_command
 import dataclasses
 import app_settings
 
-class ConfigConnectDistributed(abstract_command.AbstractCommand):
+class ConfigConnectDistributed(abstract_command.AbstractPythonCommand):
     pass
 
-class ConfigConnectStandalone(abstract_command.AbstractCommand):
+class ConfigConnectStandalone(abstract_command.AbstractPythonCommand):
     pass
 
-class ProduceKafkaEvents(abstract_command.AbstractCommand):
+class ProduceKafkaEvents(abstract_command.AbstractPythonCommand):
     pass
 
-class AddConnectStarrocksDistributed(abstract_command.AbstractCommand):
+class AddConnectStarrocksDistributed(abstract_command.AbstractPythonCommand):
     pass
 
-class ConfigStarrocksSink(abstract_command.AbstractCommand):
+class ConfigStarrocksSink(abstract_command.AbstractPythonCommand):
     pass
 
-class AddTopics(abstract_command.AbstractCommand):
+class AddTopics(abstract_command.AbstractPythonCommand):
     pass
 
 class CreateDatabases(abstract_command.AbstractSQLCommand):
@@ -41,6 +41,10 @@ class StartProject(abstract_command.AbstractBashCommand):
 class DownProject(abstract_command.AbstractBashCommand):
     pass
 
+class BuildImage(abstract_command.AbstractBashCommand):
+    pass
+
+
 @dataclasses.dataclass(frozen = True)
 class CommandBox:
 
@@ -59,7 +63,7 @@ class CommandBox:
     stop_project: StopProject = StopProject(settingObj)
     start_project: StartProject = StartProject(settingObj)
     down_project: DownProject = DownProject(settingObj)
-
+    build_image: BuildImage = BuildImage(settingObj)
 
 if __name__ == "__main__":
     import inspect 

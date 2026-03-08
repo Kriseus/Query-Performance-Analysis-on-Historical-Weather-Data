@@ -44,7 +44,9 @@ def produce_kafka_events_function(
 
     with multiprocessing.Pool(multipocesses) as pool:
         pool.map(multiProducer, areaList)
-    
+        pool.map(print, [1,2,3,])
+
+        
     Producer.produceSmallEvents( 
         areaList[0],
         config = configDict, 

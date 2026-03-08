@@ -1,33 +1,22 @@
 #!/bin/bash
 
-basic_path = "/home/bezi-tunowy/Bezi-Tunowy/Project/docker/images/"
-directory = "bezi-tunowy-kafka-0"
-name = "kafka-0"
-user = "bezi-tunowy/"
+ROOT_DIR="$(realpath $(dirname $0))"
+suffix=".sh"
+config_suffix=".json"
+filename="$(basename ${0})"
 
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -n|--name)
-      name="$2"
-      shift 2
-      ;;
-    -u|--user)
-      user="$2"
-      shift 2
-      ;;  
-    -p|--path)
-      basic_path="$2"
-      shift 2
-      ;;
-    -d|--dir)
-      directory="$2"
-      shift 2
-      ;;  
-    -h|--help)
-      echo -e "--path -p: path to docker compose target file. "
-      exit
-      ;;
-  esac
+while [ "$(basename $ROOT_DIR)" != "Project" ]; do
+  ROOT_DIR="${ROOT_DIR%/$(basename $ROOT_DIR)}"
 done
 
-docker build -t "$user$name" "$basic_path$directory"
+JSN_DIR="$ROOT_DIR/jsons/parameters_values/"
+
+CONFIG_FILE="${filename%$suffix}$config_suffix"
+CONFIG="$JSN_DIR$CONFIG_FILE"
+json=$(cat $CONFIG)
+IMAGE_DIR="$(echo "$json" | jq -r '.ImageDir')"
+NAME="$(echo "$json" | jq -r '.Name')"
+
+FULL_IMAGE_PATH="$ROOT_DIR/docker/images/$IMAGE_DIR"
+
+docker build -t $NAME $FULL_IMAGE_PATH

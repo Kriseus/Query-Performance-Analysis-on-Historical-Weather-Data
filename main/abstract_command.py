@@ -14,10 +14,10 @@ while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
 JSN_DIR = ROOT_DIR / "jsons"
 
 class AbstractCommand(abc.ABC, cmd2.Cmd):
-    @abc.abstractmethod
     def __init__(self, settingObj):
         super().__init__()
 
+        
         """Configs"""
         self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = settingObj.config
         # self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
@@ -50,6 +50,9 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
 
         """Methods Acces"""
         self.methods_acces : typing.Dict[str, typing.Callable] = settingObj.methods_acces
+
+        """Prompt"""
+        self.prompt = f"<<{self.me}>> : "
 
     def __get_name(self):
         return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()    
@@ -99,7 +102,6 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
     def do_show_current_config(self, _: cmd2.Statement):
         self.__show_configs()
 
-    @abc.abstractmethod
     def do_execute(self, _: cmd2.Statement):
         pass
 
@@ -127,7 +129,11 @@ class AbstractBashCommand(AbstractCommand):
         self.my_scripts_key: str = f"{self.me}"
 
     def do_execute(self, _: cmd2.Statement):
-        subprocess.run('/bin/bash', self.all_bash_scripts[self.my_scripts_key])
+        subprocess.Popen( 
+            ["/bin/bash", self.all_bash_scripts[self.my_scripts_key]],  
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
 
 class AbstractSQLCommand(AbstractCommand):
 
@@ -145,6 +151,7 @@ class AbstractSQLCommand(AbstractCommand):
     def do_execute(self, _: cmd2.Statement):
         ready_to_exec = functools.partial(self.all_functions[self.my_function_key], **self.all_configs[self.my_config_key])
         ready_to_exec(self.sqlEngine)  
+
 
 class AbstractQueryCommand():
     pass

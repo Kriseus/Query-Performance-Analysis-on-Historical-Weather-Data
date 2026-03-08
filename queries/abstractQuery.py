@@ -5,7 +5,6 @@ class abstractQuery(abc.ABC):
 
     @abc.abstractmethod
     def __init__(self, sqlEngine, database, table, queryMethod):
-
         self.sqlEngine = sqlEngine
         self.database = database
         self.table = table
@@ -28,13 +27,11 @@ class abstractQuery(abc.ABC):
     
     def executeQuery(self):
         with self.sqlEngine.connect() as connection:
-
             connection.execute(sqlalchemy.text(f"USE {self.database};"))
             connection.execute(self.sqlQuery)
 
     def _executeQueryResultAsList(self):
         with self.sqlEngine.connect() as connection:
-
             connection.execute(sqlalchemy.text(f"USE {self.database};"))
             rows = connection.execute(self.sqlQuery).fetchall()
         
@@ -42,7 +39,6 @@ class abstractQuery(abc.ABC):
     
     def _executeQueryAndReturnAsGenerator(self):
         with self.sqlEngine.connect() as connection:
-
             connection.execute(sqlalchemy.text(f"USE {self.database};"))
             rows = connection.execute(self.sqlQuery)
             
@@ -50,11 +46,9 @@ class abstractQuery(abc.ABC):
                 yield row
 
     def to_list(self):
-        
         return self._executeQueryResultAsList()
 
     def __iter__(self):
-
         return self._executeQueryAndReturnAsGenerator()
     
     def __call__(self):
