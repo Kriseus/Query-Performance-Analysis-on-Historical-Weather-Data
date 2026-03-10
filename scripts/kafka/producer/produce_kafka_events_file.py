@@ -6,7 +6,6 @@ import multiprocessing
 import inspect
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent
-
 while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
     pass
 
