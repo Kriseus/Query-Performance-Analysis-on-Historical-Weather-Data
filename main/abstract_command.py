@@ -17,31 +17,28 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
     def __init__(self, settingObj):
         super().__init__()
 
-        
-        """Configs"""
-        self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = settingObj.config
-        # self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
-        self.all_types: typing.Dict[str, str ] = settingObj.types
-        
-        """Directories"""
-        self.SCRIPT_DIR: pathlib.Path = settingObj.SCRIPT_DIR
-        self.JSN_VALUES_DIR: pathlib.Path = settingObj.JSN_VALUES_DIR
-        self.JSN_HINTS_DIR: pathlib.Path = settingObj.JSN_HINTS_DIR
-        self.JSN_TYPES_DIR: pathlib.Path = settingObj.JSN_TYPES_DIR
-        
-        """Identification"""
-        self.me: str = self.__get_name()
-        
-        """Local keys"""
-        self.my_config_key: str = f"{self.me}.json"
-        # self.my_function_key: str = f"{self.me}_function"
+        self.settings_alias = settingObj
 
+        """Configs"""
+        # self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = self.settings_alias.config
+        # self.all_types: typing.Dict[str, str ] = self.settings_alias.types
+
+        self.all_configs: typing.Dict[ str, typing.Dict[ str, typing.Any ] ]
+        self.all_types: typing.Dict[ str, str ]
+
+        """Local keys"""
+        self.my_config_key: str
+
+        """Directories"""
+        # self.JSN_VALUES_DIR: pathlib.Path = self.settings_alias.JSN_VALUES_DIR
+        self.JSN_VALUES_DIR: pathlib.Path
+        
         """Hints"""
-        self.my_hints: typing.Dict[ str, str ] = settingObj.hints
-        self.my_types: typing.Dict[ str, str ] = settingObj.types[ self.my_config_key ]
+        self.my_types: typing.Dict[ str, str ]
+        self.my_hints: typing.Dict[ str, str ] = self.settings_alias.hints
 
         """Input Hints"""
-        self.enumerator_over_config_keys: typing.Dict[ int, str ] = self.__get_enumerator_over_config_keys()
+        self.enumerator_over_config_keys: typing.Dict[ int, str ]
         self.input_messages: typing.Dict[ str, str ]= {
             "input_cont"  : "Do You wish to change parameter? y/n :\n",
             "input_key"   : "Please select one of the following, numbers which matches the key you are intrested in " + f"{self.enumerator_over_config_keys}" + " :\n",
@@ -49,22 +46,48 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         }
 
         """Methods Acces"""
-        self.methods_acces : typing.Dict[str, typing.Callable] = settingObj.methods_acces
-
+        self.methods_acces : typing.Dict[str, typing.Callable] = self.settings_alias.methods_acces
+        
         """Prompt"""
-        self.prompt = f"<<{self.me}>> : "
-
-    def __get_name(self):
+        self.prompt:str
+    
+    @property
+    def me(self):
         return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()    
     
+    @property
+    def my_config_key(self)->str:
+        return f"{self.me}.json"
+    
+    @property
+    def my_types(self)->typing.Dict[ str, str ]:
+        return self.settings_alias.types[ self.my_config_key ]
+
+    @property
+    def enumerator_over_config_keys(self):
+        return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
+
+    @property
+    def prompt(self) -> str:
+        return f"<<{self.me}>> : "
+    
+    @property
+    def JSN_VALUES_DIR(self) -> pathlib.Path:
+        return
+             
+    @property
+    def all_configs(self) -> typing.Dict[ str, typing.Dict[str, typing.Any] ]:
+        return
+    
+    @property
+    def all_types(self) -> typing.Dict[str, str ]:
+        return
+
     def __show_configs(self):
         print("<<ALL CONFIG VARIABLES>>")
         for key, value in self.all_configs[self.my_config_key].items():
             print(f"Parameter: {key}: {value}")
 
-    def __get_enumerator_over_config_keys(self):
-        return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
-    
     def __get_updates(self):
         self.__show_configs()
         updated_dict  = self.all_configs[self.my_config_key].copy()
@@ -110,7 +133,7 @@ class AbstractPythonCommand(AbstractCommand):
         super().__init__(settingObj)
 
         """Configs"""
-        self.all_functions: typing.Dict[str, typing.Callable ] = settingObj.functions
+        self.all_functions: typing.Dict[str, typing.Callable ] = self.settings_alias.functions
         
         """Local keys"""
         self.my_function_key: str = f"{self.me}_function"
