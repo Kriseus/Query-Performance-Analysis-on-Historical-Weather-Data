@@ -25,7 +25,11 @@ class Settings:
         self.JSN_TYPES_DIR = self.ROOT_DIR / 'jsons' / "parameters_types" 
         self.JSN_HINTS_DIR = self.ROOT_DIR / 'jsons' / "parameters_hints" 
         self.SCRIPT_DIR = self.ROOT_DIR / 'scripts'
-        
+        # self.QUERIES_DIR = self.ROOT_DIR / "queries"    
+        self.JSN_QUERY_VALUES_DIR = self.ROOT_DIR / 'jsons' / "query_values"    
+        self.JSN_QUERY_TYPES_DIR = self.ROOT_DIR  / 'jsons' /  "query_types"    
+
+
         if str(self.SCRIPT_DIR) not in sys.path:
             sys.path.insert(1, str(self.SCRIPT_DIR))
         
@@ -34,6 +38,9 @@ class Settings:
         self.config = self.__load_jsns(self.JSN_VALUES_DIR)
         self.types = self.__load_jsns(self.JSN_TYPES_DIR) 
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
+        self.query_config = self.__load_jsns(self.JSN_QUERY_VALUES_DIR) 
+        self.query_types = self.__load_jsns(self.JSN_TYPES_DIR) 
+
         self.methods_acces = self.__get_methods()
 
         self.sqlEngine = sqlalchemy.create_engine('starrocks://root@localhost:9030/')
