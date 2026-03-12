@@ -13,7 +13,7 @@ while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
 
 JSN_DIR = ROOT_DIR / "jsons"
 
-"""<< ZEROTH ABSTRACTION LAYER >>"""
+""" << ZEROTH ABSTRACTION LAYER >> """
 
 class AbstractBase(abc.ABC, cmd2.Cmd):
     def __init__(self, settingObj):
@@ -22,8 +22,6 @@ class AbstractBase(abc.ABC, cmd2.Cmd):
         self.settings_alias = settingObj
 
         """Configs"""
-        # self.all_configs: typing.Dict[ str, typing.Dict[str, typing.Any] ] = self.settings_alias.config
-        # self.all_types: typing.Dict[str, str ] = self.settings_alias.types
 
         self.all_configs: typing.Dict[ str, typing.Dict[ str, typing.Any ] ]
         self.all_types: typing.Dict[ str, str ]
@@ -32,7 +30,6 @@ class AbstractBase(abc.ABC, cmd2.Cmd):
         self.my_config_key: str
 
         """Directories"""
-        # self.JSN_VALUES_DIR: pathlib.Path = self.settings_alias.JSN_VALUES_DIR
         self.JSN_VALUES_DIR: pathlib.Path
         
         """Hints"""
@@ -51,7 +48,7 @@ class AbstractBase(abc.ABC, cmd2.Cmd):
         self.methods_acces : typing.Dict[str, typing.Callable] = self.settings_alias.methods_acces
         
         """Prompt"""
-        self.prompt:str = f"<<{self.__class__.__name__}>> : "
+        self.prompt:str = f" << {self.__class__.__name__} >> : "
     
     @property
     def me(self):
@@ -131,7 +128,7 @@ class AbstractBase(abc.ABC, cmd2.Cmd):
     def do_execute(self, _: cmd2.Statement):
         pass
 
-""" << FIRST ABSTRACTION LAYER """
+""" << FIRST ABSTRACTION LAYER >> """
 
 class AbstractCommand(AbstractBase):
     def __init__(self, settingObj):

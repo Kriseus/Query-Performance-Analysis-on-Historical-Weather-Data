@@ -10,7 +10,7 @@ class Main(cmd2.Cmd):
 
     def __init__(self):
         super().__init__()
-        self.prompt : str = f"<<{self.__class__.__name__}>> : " 
+        self.prompt : str = f" << {self.__class__.__name__} >> : " 
         self.all_commands: commands.CommandBox = commands.CommandBox()
     
     @cmd2.with_category("Useless")
