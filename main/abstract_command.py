@@ -13,7 +13,9 @@ while (ROOT_DIR := ROOT_DIR.parent).name != "Project":
 
 JSN_DIR = ROOT_DIR / "jsons"
 
-class AbstractCommand(abc.ABC, cmd2.Cmd):
+"""<< ZEROTH ABSTRACTION LAYER >>"""
+
+class AbstractBase(abc.ABC, cmd2.Cmd):
     def __init__(self, settingObj):
         super().__init__()
 
@@ -49,11 +51,12 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
         self.methods_acces : typing.Dict[str, typing.Callable] = self.settings_alias.methods_acces
         
         """Prompt"""
-        self.prompt:str
+        self.prompt:str = f"<<{self.__class__.__name__}>> : "
     
     @property
     def me(self):
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()    
+        # return re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower() 
+        return re.sub(r'(?<!^)(?=[A-Z0-9])', '_', self.__class__.__name__).lower()   
     
     @property
     def my_config_key(self)->str:
@@ -66,20 +69,19 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
     @property
     def enumerator_over_config_keys(self):
         return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
-
-    @property
-    def prompt(self) -> str:
-        return f"<<{self.me}>> : "
     
     @property
+    @abc.abstractmethod
     def JSN_VALUES_DIR(self) -> pathlib.Path:
         return
-             
+    
     @property
+    @abc.abstractmethod
     def all_configs(self) -> typing.Dict[ str, typing.Dict[str, typing.Any] ]:
         return
     
     @property
+    @abc.abstractmethod
     def all_types(self) -> typing.Dict[str, str ]:
         return
 
@@ -125,8 +127,63 @@ class AbstractCommand(abc.ABC, cmd2.Cmd):
     def do_show_current_config(self, _: cmd2.Statement):
         self.__show_configs()
 
+    @abc.abstractmethod
     def do_execute(self, _: cmd2.Statement):
         pass
+
+""" << FIRST ABSTRACTION LAYER """
+
+class AbstractCommand(AbstractBase):
+    def __init__(self, settingObj):
+        super().__init__(settingObj)
+
+
+    @property
+    def JSN_VALUES_DIR(self) -> pathlib.Path:
+        return self.settings_alias.JSN_VALUES_DIR
+            
+    @property
+    def all_configs(self) -> typing.Dict[ str, typing.Dict[str, typing.Any] ]:
+        return self.settings_alias.config
+    
+    @property
+    def all_types(self) -> typing.Dict[str, str ]:
+        return self.settings_alias.types
+
+class AbstractQueryCommand(AbstractBase):
+
+    def __init__(self, settingObj, queryClass):
+        super().__init__(settingObj)
+
+        self.sqlEngine = settingObj.sqlEngine
+        self.QueryClass = queryClass
+
+    @property
+    def JSN_VALUES_DIR(self) -> pathlib.Path:
+        return self.settings_alias.JSN_QUERY_VALUES_DIR
+            
+    @property
+    def all_configs(self) -> typing.Dict[ str, typing.Dict[str, typing.Any] ]:
+        return self.settings_alias.query_config
+    
+    @property
+    def all_types(self) -> typing.Dict[str, str ]:
+        return self.settings_alias.self.query_types
+    
+    @property
+    def QueryInstance(self):
+        return self.QueryClass(self.sqlEngine, **self.all_configs[self.my_config_key])
+
+    def do_show_query(self, _: cmd2.Statement):
+        self.QueryInstance.showQuery()
+
+    def do_execute(self, _: cmd2.Statement):
+        self.QueryInstance.executeQuery()
+
+    def do_plot_query(self, _: cmd2.Statement):
+        self.QueryInstance()
+
+""" << SECOND ABSTRACTION LAYER >> """
 
 class AbstractPythonCommand(AbstractCommand):
     def __init__(self, settingObj):
@@ -175,26 +232,4 @@ class AbstractSQLCommand(AbstractCommand):
         ready_to_exec = functools.partial(self.all_functions[self.my_function_key], **self.all_configs[self.my_config_key])
         ready_to_exec(self.sqlEngine)  
 
-
-class AbstractQueryCommand():
-    pass
-
-if __name__ == "__main__":
-
-    enum = {
-        1:"path",
-        2:"name",
-        3:"passwd",
-        4:"topic",
-        5:"table",
-    }
-    
-    while (cont:= input("Do You wish to change parameter? y/n ")) not in ("N", "n"):
-            if cont not in ("y","Y"):
-                print("Thats not correct value...")
-                continue
-            
-            while (key:=input("Please select one of the following, numbers which matches the key you are intrested in:\n" + str(enum))) not in map(str,enum.keys()):
-                pass
-
-            value = str(input("Please apply value of the parameter you chose: "))
+""" << END OF ABSTRACTION >> """

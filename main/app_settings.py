@@ -29,7 +29,6 @@ class Settings:
         self.JSN_QUERY_VALUES_DIR = self.ROOT_DIR / 'jsons' / "query_values"    
         self.JSN_QUERY_TYPES_DIR = self.ROOT_DIR  / 'jsons' /  "query_types"    
 
-
         if str(self.SCRIPT_DIR) not in sys.path:
             sys.path.insert(1, str(self.SCRIPT_DIR))
         

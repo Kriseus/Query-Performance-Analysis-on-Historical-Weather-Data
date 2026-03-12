@@ -1,0 +1,8 @@
+{
+    "database": "weather", 
+    "table": "temperatures_table",
+    "mainYear" :"2021", 
+    "comparisonYears" : ["2012", "2013", "2014"], 
+    "parameter" : "T2M",
+     "limit" : "all"
+}
