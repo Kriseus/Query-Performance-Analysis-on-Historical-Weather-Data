@@ -1,5 +1,6 @@
 import abc
 import sqlalchemy
+import pandas
 
 class abstractQuery(abc.ABC):
 
@@ -34,21 +35,32 @@ class abstractQuery(abc.ABC):
         with self.sqlEngine.connect() as connection:
             connection.execute(sqlalchemy.text(f"USE {self.database};"))
             rows = connection.execute(self.sqlQuery).fetchall()
-        
+
         return rows
     
     def _executeQueryAndReturnAsGenerator(self):
+
         with self.sqlEngine.connect() as connection:
             connection.execute(sqlalchemy.text(f"USE {self.database};"))
             rows = connection.execute(self.sqlQuery)
-            
+            print(rows.keys())            
             for row in rows:
                 yield row
+
+    def to_dataframe(self):
+        
+        with self.sqlEngine.connect() as connection:
+            connection.execute(sqlalchemy.text(f"USE {self.database};"))
+            rows = connection.execute(self.sqlQuery)
+
+        return pandas.DataFrame({key : value for key, value in zip(list(rows.keys()), zip(*rows.fetchall()))})
+
 
     def to_list(self):
         return self._executeQueryResultAsList()
 
     def __iter__(self):
+
         return self._executeQueryAndReturnAsGenerator()
     
     def __call__(self):

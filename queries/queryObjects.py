@@ -21,7 +21,7 @@ class Query3(abstractQuery.abstractQuery):
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit,)
 
     def plot_query(self):
-        return super().plot_query()
+        raise Exception("No Plot available for this query")
 
 class Query4(abstractQuery.abstractQuery):
     def __init__(self, sqlEngine, 
@@ -35,14 +35,46 @@ class Query4(abstractQuery.abstractQuery):
         self.comparisonYears = comparisonYears
         self.parameter = parameter
         self.limit = limit
+
         super().__init__(sqlEngine, database, table, queryMethod = queryMethods.method_query_4)
 
     def _completeQuery(self):
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit )
     
     def plot_query(self):
-        return super().plot_query()
+        raise Exception("No Plot available for this query")
+
+class Query5(abstractQuery.abstractQuery):
     
+    def __init__(self, sqlEngine, 
+                database = 'weather', 
+                table = "temperatures_table",
+                mainYear ='2021', comparisonYears = ['2019', '2017', '1986'], 
+                parameter = "T2M", limit = 1000000000,
+                ):
+    
+        self.mainYear = mainYear
+        self.comparisonYears = comparisonYears
+        self.parameter = parameter
+        self.limit = limit
+
+
+        super().__init__(sqlEngine, database, table, queryMethod = queryMethods.method_query_5)
+
+    def _completeQuery(self):
+        return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit )
+    
+    def plot_query(self):
+        pass
+
+
+
 if __name__ == "__main__":
     
-    pass
+    import sqlalchemy
+
+    engine = sqlalchemy.create_engine('starrocks://root@localhost:9030/')
+    que = Query5(engine, limit = 20)
+
+    df = que.to_dataframe()
+    print(df)    

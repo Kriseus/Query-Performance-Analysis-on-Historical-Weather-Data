@@ -1,5 +1,3 @@
-import sys
-import inspect
 import sqlalchemy
 
 def method_query_0(table = "temp_tbl", date = '2021-01-05', terrain = 'land', parameter = 'T2M', than = 5, order = 'DESC', by = '1, 2, 3'):
@@ -29,10 +27,11 @@ def method_query_2(date = '2021-01-02', table = 'temp_tbl'):
 
 def method_query_3( table = 'temp_tbl', 
                     mainYear = '2021', 
-                    comparisonYears = {'2012', '2013', '2014'}, 
+                    comparisonYears = ['2012', '2013', '2014'], 
                     parameter = 'T2M', 
                     limit = 100,
                     ):
+    comparisonYears = set(comparisonYears)
 
     def buildPivotColumn(year, parameter = parameter):
         return f"ROUND(SUM(CASE WHEN YEAR(date) = '{year}' THEN {parameter} END), 2) AS YEAR_{year}"
@@ -66,19 +65,22 @@ def method_query_3( table = 'temp_tbl',
     
     return sqlalchemy.text(sqlQuery)
 
-def method_query_4( table = 'temp_tbl', 
+def method_query_4(
+            table = 'temp_tbl', 
             mainYear = '2021', 
-            comparisonYears = {'2012', '2013', '2014'}, 
+            comparisonYears = ['2012', '2013', '2014'], 
             parameter = 'T2M', 
             limit = 100,
             ):
     
+    comparisonYears = set(comparisonYears)
+
     if mainYear in comparisonYears:
         comparisonYears = comparisonYears - mainYear
-    # if len(comparisonYears) == 0:
-    #     raise ValueError
+    
     if not comparisonYears:
         raise ValueError
+    
     def buildJoinColumns(year, parameter = parameter):
         return f"""(SELECT latitude, longitude, date, {parameter} AS {parameter}{year} FROM {table} WHERE YEAR(date) = '{year}') AS sub_{year}"""
 
@@ -108,20 +110,40 @@ def method_query_4( table = 'temp_tbl',
     
     return sqlalchemy.text(sqlQuery)
 
-def query5():
+def method_query_5( table = 'temperatures_table', 
+            mainYear = '2021', 
+            comparisonYears = ['2012', '2013', '2014'], 
+            parameter = 'T2M', 
+            limit = "100000000"
+            ):
+    
+    comparisonYears = set(comparisonYears)
+    temporary_table = f"{method_query_3(table, mainYear, comparisonYears, parameter, limit)}"
 
-    pass
+    def build_avg_columns(comparisonYears = comparisonYears, parameter = parameter):
+        temporary_list = [f"ROUND(AVG(subQuery.{parameter}_{mainYear}_{comparison_year}), 3) AS AVG_{parameter}_{mainYear}_{comparison_year}" for comparison_year in comparisonYears]
 
+        return ", \n".join(temporary_list)
+
+    cols = build_avg_columns()
+
+    sqlQuery = f"SELECT subQuery.longitude, subQuery.latitude, \n{cols} FROM\n({temporary_table.rstrip(";")}) AS subQuery \nGROUP BY subQuery.longitude, subQuery.latitude"
+
+    return sqlalchemy.text(sqlQuery)
+ 
 def query6():
 
     pass
 
 if __name__ == "__main__":
     
-    module = sys.modules[__name__]
+    # module = sys.modules[__name__]
+# 
+    # for name, obj in inspect.getmembers(module):
+        # if inspect.isfunction(obj):
+            # print("FUNKCJA:", name)
+        # elif inspect.isclass(obj):
+            # print("KLASA:", name)
 
-    for name, obj in inspect.getmembers(module):
-        if inspect.isfunction(obj):
-            print("FUNKCJA:", name)
-        elif inspect.isclass(obj):
-            print("KLASA:", name)
+    a = method_query_5(mainYear = "2025", comparisonYears = ['2019', '2016', '1986'])
+    print(a)
