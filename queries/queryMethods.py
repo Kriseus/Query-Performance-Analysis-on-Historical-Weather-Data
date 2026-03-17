@@ -58,6 +58,7 @@ def method_query_3( table = 'temp_tbl',
         "SELECT latitude, longitude, MONTH(date) AS month, DAY(date) day,", 
         cols, 
         f"FROM {table}",
+        f"WHERE terrain != 'sea'",
         f"GROUP BY  latitude, longitude, month, day", 
         having, 
         f"LIMIT {limit};"
@@ -137,13 +138,5 @@ def query6():
 
 if __name__ == "__main__":
     
-    # module = sys.modules[__name__]
-# 
-    # for name, obj in inspect.getmembers(module):
-        # if inspect.isfunction(obj):
-            # print("FUNKCJA:", name)
-        # elif inspect.isclass(obj):
-            # print("KLASA:", name)
-
     a = method_query_5(mainYear = "2025", comparisonYears = ['2019', '2016', '1986'])
     print(a)

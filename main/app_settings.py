@@ -1,11 +1,11 @@
-import sys 
+import sys
 import contextlib
 import importlib
 import pathlib
-import os 
+import os
 import json 
 import inspect
-import ast  
+import ast
 import sqlalchemy
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent
@@ -27,7 +27,7 @@ class Settings:
         self.SCRIPT_DIR = self.ROOT_DIR / 'scripts'
         # self.QUERIES_DIR = self.ROOT_DIR / "queries"    
         self.JSN_QUERY_VALUES_DIR = self.ROOT_DIR / 'jsons' / "query_values"    
-        self.JSN_QUERY_TYPES_DIR = self.ROOT_DIR  / 'jsons' /  "query_types"    
+        self.JSN_QUERY_TYPES_DIR = self.ROOT_DIR  / 'jsons' / "query_types"    
 
         if str(self.SCRIPT_DIR) not in sys.path:
             sys.path.insert(1, str(self.SCRIPT_DIR))
@@ -38,7 +38,7 @@ class Settings:
         self.types = self.__load_jsns(self.JSN_TYPES_DIR) 
         self.hints = self.__load_hints(self.JSN_HINTS_DIR)
         self.query_config = self.__load_jsns(self.JSN_QUERY_VALUES_DIR) 
-        self.query_types = self.__load_jsns(self.JSN_TYPES_DIR) 
+        self.query_types = self.__load_jsns(self.JSN_QUERY_TYPES_DIR) 
 
         self.methods_acces = self.__get_methods()
 
@@ -107,14 +107,4 @@ class Settings:
         self.functions = self.__load_functions(self.SCRIPT_DIR)
 
     def reload_configs(self):
-        self.config = self.__load_jsns(self.JSN_VALUES_DIR)
-         
-
-if __name__ == "__main__":
-
-    a = Settings()
-    [print(i) for i in a.functions]
-    print(a.hints)
-    print(a.types)
-    print(a.config)
-    print(a.bash_scripts)
+        self.config = self.__load_jsns(self.JSN_VALUES_DIR)       

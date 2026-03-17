@@ -59,14 +59,16 @@ class AbstractBase(abc.ABC, cmd2.Cmd):
     def my_config_key(self)->str:
         return f"{self.me}.json"
     
-    @property
-    def my_types(self)->typing.Dict[ str, str ]:
-        return self.settings_alias.types[ self.my_config_key ]
 
     @property
     def enumerator_over_config_keys(self):
         return { iter : key for iter, key in enumerate(self.all_configs[self.my_config_key].keys())}
     
+    @property
+    @abc.abstractmethod
+    def my_types(self)->typing.Dict[ str, str ]:
+        return 
+
     @property
     @abc.abstractmethod
     def JSN_VALUES_DIR(self) -> pathlib.Path:
@@ -134,6 +136,10 @@ class AbstractCommand(AbstractBase):
     def __init__(self, settingObj):
         super().__init__(settingObj)
 
+    @property
+    def my_types(self)->typing.Dict[ str, str ]:
+        return self.settings_alias.types[ self.my_config_key ]
+
 
     @property
     def JSN_VALUES_DIR(self) -> pathlib.Path:
@@ -156,6 +162,10 @@ class AbstractQueryCommand(AbstractBase):
         self.QueryClass = queryClass
 
     @property
+    def my_types(self)->typing.Dict[ str, str ]:
+        return self.settings_alias.query_types[ self.my_config_key ]
+
+    @property
     def JSN_VALUES_DIR(self) -> pathlib.Path:
         return self.settings_alias.JSN_QUERY_VALUES_DIR
             
@@ -165,12 +175,17 @@ class AbstractQueryCommand(AbstractBase):
     
     @property
     def all_types(self) -> typing.Dict[str, str ]:
-        return self.settings_alias.self.query_types
+        return self.settings_alias.query_types
     
     @property
     def QueryInstance(self):
         return self.QueryClass(self.sqlEngine, **self.all_configs[self.my_config_key])
 
+    def do_show_params(self, _: cmd2.Statement):
+
+        for k, v in self.__dict__.items():
+            print(k, v)
+    
     def do_show_query(self, _: cmd2.Statement):
         self.QueryInstance.showQuery()
 
@@ -179,6 +194,10 @@ class AbstractQueryCommand(AbstractBase):
 
     def do_plot_query(self, _: cmd2.Statement):
         self.QueryInstance()
+#TODO
+    def do_plot_query(self, _: cmd2.Statement):
+        self.QueryClass.execute_plot()
+        pass
 
 """ << SECOND ABSTRACTION LAYER >> """
 

@@ -71,6 +71,10 @@ class QueryCommand4(abstract_command.AbstractQueryCommand):
     def __init__(self, settingObj, queryClass = queryObjects.Query4):
         super().__init__(settingObj, queryClass)
 
+class QueryCommand5(abstract_command.AbstractQueryCommand):
+    def __init__(self, settingObj, queryClass = queryObjects.Query5):
+        super().__init__(settingObj, queryClass)
+
 """ << Command Box >> """
 
 @dataclasses.dataclass(frozen = True)
@@ -95,3 +99,10 @@ class CommandBox:
     query_3                           : QueryCommand3 = QueryCommand3(settingObj)
     query_4                           : QueryCommand3 = QueryCommand3(settingObj)
  
+
+if __name__ == "__main__":
+
+    box = CommandBox()
+
+    que = box.query_3
+    que.do_rebuild_and_reload(None)

@@ -20,10 +20,11 @@ class Query3(abstractQuery.abstractQuery):
     def _completeQuery(self):
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit,)
 
-    def plot_query(self):
-        raise Exception("No Plot available for this query")
+    def execute_plot(self, configs = None):
+        raise Exception("Nothing to plot. ")
 
 class Query4(abstractQuery.abstractQuery):
+ 
     def __init__(self, sqlEngine, 
                 database, 
                 table,
@@ -41,8 +42,8 @@ class Query4(abstractQuery.abstractQuery):
     def _completeQuery(self):
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit )
     
-    def plot_query(self):
-        raise Exception("No Plot available for this query")
+    def execute_plot(self, configs = None):
+        raise Exception("Nothing to plot. ")
 
 class Query5(abstractQuery.abstractQuery):
     
@@ -64,17 +65,24 @@ class Query5(abstractQuery.abstractQuery):
     def _completeQuery(self):
         return self.queryMethod(self.table, self.mainYear, self.comparisonYears, self.parameter, self.limit )
     
-    def plot_query(self):
-        pass
 
-
+    def execute_plot(self, configs):
+        return super().execute_plot(configs)
 
 if __name__ == "__main__":
     
     import sqlalchemy
 
     engine = sqlalchemy.create_engine('starrocks://root@localhost:9030/')
-    que = Query5(engine, limit = 20)
+    que = Query5(engine, limit = 10000000000)
 
-    df = que.to_dataframe()
-    print(df)    
+    que.fillDataFrame()
+    print(que.queryResult.to_string())
+    que.execute_plot({
+        "AVG_T2M_2021_2017",
+        "AVG_T2M_2021_2019",
+        "AVG_T2M_2021_1986",
+        }
+        )
+    # config = {}
+    # que.execute_plot()

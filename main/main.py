@@ -57,7 +57,7 @@ class Main(cmd2.Cmd):
     def do_grant_user_privilages(self, _: cmd2.Statement):
         self.all_commands.grant_user_privilages.cmdloop()
 
-    @cmd2.with_category("Starrocks")
+    @cmd2.with_category("Project")
     def do_start_project(self, _: cmd2.Statement):
         self.all_commands.start_project.cmdloop()
 
@@ -76,6 +76,10 @@ class Main(cmd2.Cmd):
     @cmd2.with_category("Starrocks")
     def do_query_3(self, _:cmd2.Statement):
         self.all_commands.query_3.cmdloop()
+
+    @cmd2.with_category("Starrocks")        
+    def do_query_4(self, _:cmd2.Statement):
+        self.all_commands.query_4.cmdloop()
 
 
 
