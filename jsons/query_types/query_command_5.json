@@ -1,0 +1,8 @@
+{
+    "database": "str", 
+    "table": "str",
+    "mainYear" :"str", 
+    "comparisonYears" : "list", 
+    "parameter" : "str",
+    "limit" : "str"
+}

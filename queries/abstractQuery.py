@@ -2,7 +2,19 @@ import abc
 import sqlalchemy
 import pandas
 import plotly.graph_objects
+import sys 
+import pathlib
 
+ROOT_DIR = pathlib.Path(__file__).resolve()
+
+while (ROOT_DIR:=ROOT_DIR.parent).name != "Project":
+    pass
+
+# print(ROOT_DIR)
+
+sys.path.insert(1, str(ROOT_DIR / "decorators"))
+
+import my_decorators
 
 class abstractQuery(abc.ABC):
 
@@ -14,7 +26,7 @@ class abstractQuery(abc.ABC):
         self.queryMethod = queryMethod
         self.sqlQuery = self._completeQuery()
 
-        self.queryResult : pandas.DataFrame | None = None 
+        self.queryResult : pandas.DataFrame | None | int = None 
 
     @abc.abstractmethod
     def _completeQuery(self):
@@ -23,6 +35,7 @@ class abstractQuery(abc.ABC):
     @abc.abstractmethod
     def execute_plot(self, configs : set):
         configs = self._validatePlot(configs)
+        print("aansadsnikadl")
         print(configs)
         self._plot_query(configs)
 
@@ -32,7 +45,10 @@ class abstractQuery(abc.ABC):
     def returnQuery(self):
         return self.sqlQuery
     
+    @my_decorators.measure_time
+    @my_decorators.measure_memory_alloc
     def executeQuery(self):
+
         with self.sqlEngine.connect() as connection:
             connection.execute(sqlalchemy.text(f"USE {self.database};"))
             connection.execute(self.sqlQuery)
@@ -61,7 +77,7 @@ class abstractQuery(abc.ABC):
 
         return pandas.DataFrame({key : value for key, value in zip(list(rows.keys()), zip(*rows.fetchall()))})
 
-    def fillDataFrame(self):
+    def fill_DataFrame(self):
         self.queryResult = self.to_dataframe()
 
     def to_list(self):
@@ -122,12 +138,12 @@ class abstractQuery(abc.ABC):
         config = list(config)
         vis = True
         for col in config:
-            
             fig.add_trace(plotly.graph_objects.Scattermap(
             
                lat=self.queryResult["latitude"],
                lon=self.queryResult["longitude"],
                mode="markers",
+               #TODO cmin cmax, make it eynamiclly calc not hardcoded/ btw dont care about this becouse didnt implement other query so 2.5 will be always good right now
                marker=dict(size=10, color=self.queryResult[col], opacity = 0.4,  colorscale="icefire", cmin=-2.5, cmax=2.5),
                name=col,
                visible=vis

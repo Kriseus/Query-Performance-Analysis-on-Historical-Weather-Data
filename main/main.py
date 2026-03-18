@@ -81,6 +81,10 @@ class Main(cmd2.Cmd):
     def do_query_4(self, _:cmd2.Statement):
         self.all_commands.query_4.cmdloop()
 
+    @cmd2.with_category("Starrocks")        
+    def do_query_5(self, _: cmd2.Statement):
+        self.all_commands.query_5.cmdloop()
+
 
 
 

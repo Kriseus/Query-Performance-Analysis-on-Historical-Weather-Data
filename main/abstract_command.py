@@ -155,14 +155,17 @@ class AbstractCommand(AbstractBase):
 
 class AbstractQueryCommand(AbstractBase):
 
+    plot_paraser = cmd2.Cmd2ArgumentParser()
+    plot_paraser.add_argument("configs", type=str, nargs="*")
+    
     def __init__(self, settingObj, queryClass):
         super().__init__(settingObj)
 
         self.sqlEngine = settingObj.sqlEngine
         self.QueryClass = queryClass
-
+        self.QueryInstance = self.QueryClass(self.sqlEngine, **self.all_configs[self.my_config_key])
     @property
-    def my_types(self)->typing.Dict[ str, str ]:
+    def my_types(self) -> typing.Dict[ str, str ]:
         return self.settings_alias.query_types[ self.my_config_key ]
 
     @property
@@ -177,9 +180,9 @@ class AbstractQueryCommand(AbstractBase):
     def all_types(self) -> typing.Dict[str, str ]:
         return self.settings_alias.query_types
     
-    @property
-    def QueryInstance(self):
-        return self.QueryClass(self.sqlEngine, **self.all_configs[self.my_config_key])
+    # @property
+    # def QueryInstance(self):
+        # return self.QueryClass(self.sqlEngine, **self.all_configs[self.my_config_key])
 
     def do_show_params(self, _: cmd2.Statement):
 
@@ -192,12 +195,28 @@ class AbstractQueryCommand(AbstractBase):
     def do_execute(self, _: cmd2.Statement):
         self.QueryInstance.executeQuery()
 
-    def do_plot_query(self, _: cmd2.Statement):
-        self.QueryInstance()
-#TODO
-    def do_plot_query(self, _: cmd2.Statement):
-        self.QueryClass.execute_plot()
-        pass
+    def do_show_inst(self, _: cmd2.Statement):
+        print(self.QueryInstance)
+    # def do_plot_query(self, _: cmd2.Statement):
+        # self.QueryInstance()
+    def do_show_res(self, _:cmd2.Statement):
+        print(self.QueryInstance.queryResult)
+
+    def do_fill_dataframe(self, _: cmd2.Statement):
+        self.QueryInstance.fill_DataFrame()
+        print(self.QueryInstance.queryResult)
+        
+    @cmd2.with_argparser(plot_paraser)
+    def do_plot_query(self, args):
+        configs = set(args.configs.copy())
+        # print(self.QueryInstance.queryResult)
+        self.QueryInstance.fill_DataFrame()
+        # configs = {
+        # "AVG_T2M_2021_2017",
+        # "AVG_T2M_2021_2019",
+        # "AVG_T2M_2021_1986",
+        # }
+        self.QueryInstance.execute_plot(configs)
 
 """ << SECOND ABSTRACTION LAYER >> """
 

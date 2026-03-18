@@ -67,7 +67,7 @@ class Query5(abstractQuery.abstractQuery):
     
 
     def execute_plot(self, configs):
-        return super().execute_plot(configs)
+        return super().execute_plot(configs = configs)
 
 if __name__ == "__main__":
     
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     engine = sqlalchemy.create_engine('starrocks://root@localhost:9030/')
     que = Query5(engine, limit = 10000000000)
 
-    que.fillDataFrame()
+    que.fill_DataFrame()
     print(que.queryResult.to_string())
     que.execute_plot({
         "AVG_T2M_2021_2017",

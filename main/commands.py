@@ -98,7 +98,7 @@ class CommandBox:
     build_image                       : BuildImage = BuildImage(settingObj)
     query_3                           : QueryCommand3 = QueryCommand3(settingObj)
     query_4                           : QueryCommand3 = QueryCommand3(settingObj)
- 
+    query_5                           : QueryCommand5 = QueryCommand5(settingObj)
 
 if __name__ == "__main__":
 
