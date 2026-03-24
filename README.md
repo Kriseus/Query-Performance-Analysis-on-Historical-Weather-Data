@@ -17,3 +17,6 @@ Docker – containerization platform
 StarRocks – open-source analytical database
 Apache Kafka – distributed streaming platform
 Python libraries/frameworks - plotly, matplotlib, requests, confluent-kafka, pandas, geopandas, cmd2, abc, sqlalchemy, inspect, sys, os, contextlib, json, pathlib, shapely, csv, multiprocessing, functools, time, tracemalloc
+
+This project uses StarRocks Kafka Connector (Apache License 2.0)
+Source: https://github.com/StarRocks/starrocks-connector-for-kafka

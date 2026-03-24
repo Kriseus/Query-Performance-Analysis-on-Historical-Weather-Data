@@ -167,3 +167,4 @@ class abstractQuery(abc.ABC):
         
         fig.show()
     
+    
